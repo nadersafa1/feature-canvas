@@ -13,7 +13,12 @@ Paths below that don't start with `DIR` are relative to this skill's folder.
 
 1. `DIR/WORLD.md`, the sample world. It is the truth. See "The world wins" below.
 2. `DIR/spec.py`: your screens' briefs, the stories and decisions they cite, and the surface's `nav`.
-3. The exemplar for the frame, for structure only: [`assets/exemplars/phone.dc.html`](assets/exemplars/phone.dc.html) (800 × 1020) or [`assets/exemplars/web.dc.html`](assets/exemplars/web.dc.html) (1640 × 980). Its content is an illustration from the example canvas, not a fact of your world.
+3. The product's own UI, when there is one. Read its button, card, input, navigation and tab-bar components, and the screen this feature extends. Your boards copy:
+   - their shapes: heights, padding, weights, icon style, label casing and layout;
+   - the real screen's layout, when you draw a change to an existing screen.
+
+   The colours, fonts and radius already come from `BRAND` through the kit.
+4. The exemplar for the frame, for structure only: [`assets/exemplars/phone.dc.html`](assets/exemplars/phone.dc.html) (800 × 1020) or [`assets/exemplars/web.dc.html`](assets/exemplars/web.dc.html) (1640 × 980). Its content is an illustration from the example canvas, not a fact of your world.
 
 ## Making the file
 
@@ -78,8 +83,17 @@ Each point justifies a choice the screen makes; never narrate what is visible. P
   - never a `div` or `span` acting as a button.
 - On the phone, every tappable element is at least 44 px tall. Use `.btn`, `.btn-sm`, `.pill` (`.pill-on` when selected) or `.ib`. `.chip` is a label, never a control.
 - Icons are inline stroke SVG using `class="i"` or `class="ic"`. Never emoji.
-- Text contrast is at least 4.5:1. Muted text is `#4A5C66`, never lighter.
-- Use the `feature` colour (`.chip-feat`, `.feat-rail`) only where the new feature appears inside an existing screen.
+- Text contrast is at least 4.5:1. If the product's own muted colour fails on a surface, use `var(--ink-2)` there instead, and report it.
+- **No colour literals.** The board follows the product's brand only through the kit, so a hex, `rgb()` or `hsl()` value in a board fails `check.py`. Use the kit classes, or:
+  - `var(--ink)`, `var(--ink-2)` and `var(--muted)` for text;
+  - `var(--surface)`, `var(--soft)` and `var(--soft-2)` for fills;
+  - `var(--line)` and `var(--line-soft)` for borders;
+  - `var(--primary)` and `var(--on-primary)` for the primary colour and the text on it;
+  - `var(--success|warning|danger)` and their `-text` versions for status;
+  - `var(--radius)` for corners.
+
+  For a tint, use `color-mix(in srgb, var(--primary) 18%, var(--surface))`.
+- Use the `feature` colour (`.chip-feat`, `.feat-rail`, `var(--feature)`) only where the new feature appears inside an existing screen.
 - Static markup only: no script-built UI, `<iframe>`, `<object>` or `<embed>`.
 
 ## Report

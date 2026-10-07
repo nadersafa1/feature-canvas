@@ -35,7 +35,15 @@ The scripts are in this skill's `scripts/` folder; call them by absolute path fr
 
    *Done when* every role, surface, record type and stage has a name, and nothing open would change a stage.
 
-3. **Sample world.** Write `WORLD.md` as one concrete fictional world that every board uses:
+3. **Brand.** The canvas wears the product's own look; it has no house style. Run `python3 scripts/brand.py <repo root>`. It reads the project's CSS variables (following `var()` chains and the import cascade), its Tailwind and theme files, and the fonts it loads. It then prints a proposed `BRAND` with the file each value came from.
+   - Paste the proposal into `BRAND`.
+   - Open two or three of the files it cites, plus the product's button, card and navigation components. Correct any token that disagrees with what users see.
+   - Choose `mode` with the user when the product has both light and dark.
+   - With no product yet, ask for a primary colour and a font, or keep the defaults and say so.
+
+   *Done when* every `BRAND` value has a named source, or the user agreed to the default.
+
+4. **Sample world.** Write `WORLD.md` as one concrete fictional world that every board uses:
    - a fixed "now";
    - a named person for every role;
    - real-looking records, with numbers that add up;
@@ -43,10 +51,10 @@ The scripts are in this skill's `scripts/` folder; call them by absolute path fr
 
    Copy the vocabulary into `VOCABULARY` in the spec, and each surface's navigation into its `nav`. *Done when* every screen you plan could be filled from the world without inventing anything new.
 
-4. **Spec.** Fill `spec.py` from the decisions and the world.
+5. **Spec.** Fill `spec.py` from the decisions and the world.
    *Done when* `python3 scripts/check.py DIR --spec` reports `OK spec`. That check also proves every story is on a screen and every reference resolves.
 
-5. **Build.** Run `python3 scripts/build.py DIR`. It writes:
+6. **Build.** Run `python3 scripts/build.py DIR`. It writes:
    - the generated boards and `canvas.json`;
    - `helmet.html`;
    - `bundle.html`, a static viewer of every board;
@@ -54,22 +62,22 @@ The scripts are in this skill's `scripts/` folder; call them by absolute path fr
 
    *Done when* it prints the board count. It may also list the wireframes still to draw.
 
-6. **Wireframes.** Draw every screen in `SCREENS` by [WIREFRAMES.md](WIREFRAMES.md). When the harness has parallel subagents, give each one a surface and the brief's absolute path. Afterwards:
+7. **Wireframes.** Draw every screen in `SCREENS` by [WIREFRAMES.md](WIREFRAMES.md). When the harness has parallel subagents, give each one a surface and the brief's absolute path. Afterwards:
    - merge every reported **World addition** into `WORLD.md`;
    - settle every reported **Conflict** in the world, the spec or a board.
 
    *Done when* `python3 scripts/check.py DIR` passes with nothing "not drawn yet", and no reported item is left unsettled.
 
-7. **Fit.** Run `build.py` again. Open `bundle.html` in a browser, visit every page, then press **Board heights** and pass the JSON to `python3 scripts/fit.py DIR '<json>'`. Build once more.
+8. **Fit.** Run `build.py` again. Open `bundle.html` in a browser, visit every page, then press **Board heights** and pass the JSON to `python3 scripts/fit.py DIR '<json>'`. Build once more.
    *Done when* Board heights shows `{}`, or you had no browser; say so in the report.
 
-8. **Publish** by [PUBLISH.md](PUBLISH.md).
+9. **Publish** by [PUBLISH.md](PUBLISH.md).
    *Done when* the user has a link, or the files if publishing isn't possible.
 
-9. **Report.** Give the link, then the counts of stages, stories, screens and decisions. List every `assumed` decision so the user can overturn it, and every `open` one.
+10. **Report.** Give the link, then the counts of stages, stories, screens and decisions. List every `assumed` decision so the user can overturn it, and every `open` one.
 
 ## Revising
 
-A changed decision, story or flow means: edit `spec.py`, then build, check and republish. For a changed screen, edit its wireframe file and run `check.py` on it.
+A changed decision, story, flow or brand means: edit `spec.py`, then build, check and republish. A build re-applies `BRAND` to drawn wireframes too. For a changed screen, edit its wireframe file and run `check.py` on it.
 
 When the user overturns an assumed decision, set it to `agreed` with the new text. Fix every story and wireframe that cites it before you rebuild.

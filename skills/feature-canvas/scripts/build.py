@@ -57,7 +57,7 @@ def cover(spec):
     people = "".join(
         f"""<div class="card" style="padding: 18px; display: flex; flex-direction: column; gap: 8px;">
   <div style="display: flex; align-items: center; gap: 10px;"><span class="av">{E(''.join(p[0] for p in r['persona'].split()[:2]))}</span><div><div class="b" style="font-size: 16px;">{E(r['persona'])}</div><div class="muted" style="font-size: 13px;">{E(r['name'])}</div></div></div>
-  <p style="font-size: 13.5px; line-height: 1.5; color: #33454E;">{E(r['does'])}</p>
+  <p style="font-size: 13.5px; line-height: 1.5; color: var(--ink-2);">{E(r['does'])}</p>
   <div style="display: flex; gap: 4px; flex-wrap: wrap;">{''.join(surface_chip(spec, s) for s in r['surfaces'])}</div>
 </div>""" for r in spec["ROLES"])
     pages = "".join(
@@ -102,7 +102,7 @@ def model(spec):
     cards = "".join(
         f"""<article class="card" style="padding: 22px; display: flex; flex-direction: column; gap: 12px;">
   <h2 class="serif" style="font-size: 30px; line-height: 1.1;">{E(e['name'])}</h2>
-  <p style="font-size: 15px; line-height: 1.5; color: #33454E;">{E(e['what'])}</p>
+  <p style="font-size: 15px; line-height: 1.5; color: var(--ink-2);">{E(e['what'])}</p>
   <ul style="display: flex; flex-direction: column; gap: 8px;">{''.join(f'<li style="display: flex; gap: 8px; font-size: 13.5px; line-height: 1.45;">{CHECK_SVG}<span>{E(x)}</span></li>' for x in e.get('facts', []))}</ul>
   {''.join(f'<div style="display: flex; gap: 8px; font-size: 13.5px; font-weight: 600;"><span class="muted">→</span><span>{E(x)}</span></div>' for x in e.get('links', []))}
 </article>""" for e in spec["ENTITIES"])
@@ -118,7 +118,7 @@ def permissions(spec):
     head = "".join(f'<th style="width: {int(900 / len(roles))}px;">{E(r["name"])}</th>' for r in roles)
     body, n_rows = [], 0
     for group, rows in spec["PERMISSIONS"]:
-        body.append(f'<tr><td colspan="{len(roles) + 1}" class="b" style="background: #F5F6F2; font-size: 12px; letter-spacing: .06em; text-transform: uppercase;">{E(group)}</td></tr>')
+        body.append(f'<tr><td colspan="{len(roles) + 1}" class="b" style="background: var(--soft); font-size: 12px; letter-spacing: .06em; text-transform: uppercase;">{E(group)}</td></tr>')
         n_rows += 1
         for action, cells in rows:
             tds = "".join(perm_cell(cells.get(r["id"], "—")) for r in roles)
@@ -195,7 +195,7 @@ def story_card(spec, s):
     return f"""<article class="card" style="padding: 18px 18px 16px; display: flex; flex-direction: column; gap: 10px;">
   <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;"><span class="chip chip-ink">{E(s['id'])}</span><span class="chip chip-muted" title="Relative effort">{s['size']}</span>{dec}<span style="flex-grow: 1;"></span>{chips}</div>
   <h3 style="font-size: 17px; line-height: 1.25; font-weight: 700;">{E(s['title'])}</h3>
-  <p style="font-size: 13.5px; line-height: 1.5; color: #33454E;">As {article(who)} <b>{E(who)}</b>, I want {E(s['want'])}, so that {E(s['so'])}.</p>
+  <p style="font-size: 13.5px; line-height: 1.5; color: var(--ink-2);">As {article(who)} <b>{E(who)}</b>, I want {E(s['want'])}, so that {E(s['so'])}.</p>
   {f'<ul style="display: flex; flex-direction: column; gap: 6px;">{accept}</ul>' if accept else ''}
 </article>"""
 
@@ -215,7 +215,7 @@ def stage_board(spec, index, stage):
   <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 12px;">
     <div class="eyebrow">User stories · {order}</div>
     <h1 class="serif" style="font-size: 52px; line-height: 1.05;">{E(stage['id'])} · {E(stage['name'])}</h1>
-    <p style="font-size: 18px; line-height: 1.5; color: #33454E; max-width: 960px;">{E(stage['tagline'])}</p>
+    <p style="font-size: 18px; line-height: 1.5; color: var(--ink-2); max-width: 960px;">{E(stage['tagline'])}</p>
   </div>
   <aside class="card" style="width: 460px; flex: none; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px;">
     <div><div class="eyebrow">What it gives</div><p style="font-size: 14px; line-height: 1.45; margin-top: 4px;">{E(stage['gets'])}</p></div>
@@ -271,12 +271,12 @@ def roadmap(spec):
     for s in stages:
         x, y = pos[s["id"]]
         later = s.get("later")
-        bg, border = ("transparent", "2px dashed #9AA6A1") if later else ("#FFFFFF", "1px solid #C3CBC7")
-        mk = "" if later else f'<span class="mk" style="background: {spec["_brand"]["accent"]}; color: {spec["_brand"]["ink"]}; box-shadow: none; width: 24px; height: 24px; font-size: 12px;">{building.index(s) + 1}</span>'
+        bg, border = ("transparent", "2px dashed var(--muted)") if later else ("var(--surface)", "1px solid var(--line)")
+        mk = "" if later else f'<span class="mk" style="background: var(--primary); color: var(--on-primary); box-shadow: none; width: 24px; height: 24px; font-size: 12px;">{building.index(s) + 1}</span>'
         boxes.append(f"""<div style="position: absolute; left: {x}px; top: {y}px; width: {bw}px; height: {bh}px; box-sizing: border-box; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; background: {bg}; border: {border};">
   <div style="display: flex; align-items: center; gap: 8px;">{mk}<span class="b" style="font-size: 15px;">{E(s['id'])}</span><span style="flex-grow: 1;"></span><span class="chip">{len(s['stories'])} stories · {stage_points(s)} pts</span></div>
   <div style="font-size: 16px; font-weight: 700; line-height: 1.25;">{E(s['name'])}</div>
-  <div style="font-size: 12px; line-height: 1.4; color: #4A5C66;">{E(s['tagline'])}</div>
+  <div style="font-size: 12px; line-height: 1.4; color: var(--muted);">{E(s['tagline'])}</div>
 </div>""")
         for dep in s.get("after", []):
             lines_.append(route(pos[dep], pos[s["id"]], bw, bh))
@@ -291,7 +291,7 @@ def roadmap(spec):
             f"""<div class="card" style="padding: 18px; display: flex; flex-direction: column; gap: 8px;">
   <div style="display: flex; align-items: center; gap: 8px;"><span class="eyebrow">Milestone {i}</span><span style="flex-grow: 1;"></span><span class="chip chip-ink">{E(' + '.join(m['stages']))}</span></div>
   <div class="serif" style="font-size: 24px; line-height: 1.1;">{E(m['name'])}</div>
-  <p style="font-size: 14px; line-height: 1.5; color: #33454E;">{E(m['what'])}</p>
+  <p style="font-size: 14px; line-height: 1.5; color: var(--ink-2);">{E(m['what'])}</p>
 </div>""" for i, m in enumerate(spec["MILESTONES"], start=1)) + "</section>"
     rows = "".join(
         f'<tr><td class="tnum b">{building.index(s) + 1 if not s.get("later") else "—"}</td><td class="b">{E(s["id"])}</td><td>{E(s["name"])}</td><td class="tnum">{len(s["stories"])}</td><td class="tnum">{stage_points(s)}</td><td>{"".join(surface_chip(spec, x) for x in stage_surfaces(s))}</td><td>{E(", ".join(s.get("after", [])) or "—")}</td></tr>'
@@ -301,8 +301,8 @@ def roadmap(spec):
     table = f"""<div class="card"><table>
 <thead><tr><th style="width: 60px;">Order</th><th style="width: 70px;">Stage</th><th>Name</th><th style="width: 80px;">Stories</th><th style="width: 90px;">Effort pts</th><th style="width: 340px;">Surfaces</th><th style="width: 220px;">Needs first</th></tr></thead>
 <tbody>{rows}</tbody></table>
-<div class="muted" style="padding: 12px 10px; font-size: 13px;"><b class="tnum" style="color: {spec['_brand']['ink']};">{n} stories · {p} effort points</b> before the parking lot. Effort is relative (S 1, M 2, L 3): compare stages with it, never estimate time with it. Each stage ships on its own.</div></div>"""
-    legend = f'<div style="display: flex; gap: 22px; flex-wrap: wrap; font-size: 13px;"><span style="display: inline-flex; align-items: center; gap: 8px;"><span class="mk" style="background: {spec["_brand"]["accent"]}; color: {spec["_brand"]["ink"]}; box-shadow: none;">1</span>Recommended build order</span><span style="display: inline-flex; align-items: center; gap: 8px;"><span style="width: 18px; height: 14px; border: 2px dashed #9AA6A1;"></span>Parking lot</span><span class="muted">Arrows: a stage needs the one it comes from.</span></div>'
+<div class="muted" style="padding: 12px 10px; font-size: 13px;"><b class="tnum" style="color: var(--ink);">{n} stories · {p} effort points</b> before the parking lot. Effort is relative (S 1, M 2, L 3): compare stages with it, never estimate time with it. Each stage ships on its own.</div></div>"""
+    legend = f'<div style="display: flex; gap: 22px; flex-wrap: wrap; font-size: 13px;"><span style="display: inline-flex; align-items: center; gap: 8px;"><span class="mk" style="background: var(--primary); color: var(--on-primary); box-shadow: none;">1</span>Recommended build order</span><span style="display: inline-flex; align-items: center; gap: 8px;"><span style="width: 18px; height: 14px; border: 2px dashed var(--muted);"></span>Parking lot</span><span class="muted">Arrows: a stage needs the one it comes from.</span></div>'
     lead = spec["CANVAS"].get("roadmap_lead", "Every stage is deployable on its own. Rows are tracks; a stage sits to the right of everything it needs.")
     inner = header("User stories · Roadmap", "Build order and dependencies", E(lead), 56, 1100) + legend + graph + ms + table
     h = 48 + 210 + 28 + 24 + 28 + gh + (28 + 170 if ms else 0) + 28 + 40 + 44 * len(stages) + 50 + 48
@@ -318,16 +318,16 @@ def stage_surfaces(stage):
     return seen
 
 
-def hline(x1, x2, y, color="#51646C"):
+def hline(x1, x2, y, color="var(--muted)"):
     return f'<div style="position: absolute; left: {min(x1, x2)}px; top: {y - 1}px; width: {abs(x2 - x1) + 2}px; height: 2px; background: {color};"></div>'
 
 
-def vline(x, y1, y2, color="#51646C"):
+def vline(x, y1, y2, color="var(--muted)"):
     return f'<div style="position: absolute; left: {x - 1}px; top: {min(y1, y2)}px; width: 2px; height: {abs(y2 - y1) + 2}px; background: {color};"></div>'
 
 
 def head_right(x, y):
-    return f'<div style="position: absolute; left: {x - 9}px; top: {y - 6}px; width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 9px solid #51646C;"></div>'
+    return f'<div style="position: absolute; left: {x - 9}px; top: {y - 6}px; width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 9px solid var(--muted);"></div>'
 
 
 def route(a, b, bw, bh):

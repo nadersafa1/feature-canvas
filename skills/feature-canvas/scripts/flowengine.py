@@ -6,13 +6,12 @@ edge: (from, to) | (from, to, label) | (from, to, label, dashed)
 """
 from common import E, page, round20
 
-LINE = "#51646C"
+LINE = "var(--muted)"
 FLOW_W = 1640
 
 
 class Flow:
-    def __init__(self, brand, card_w=240, card_h=96, pitch_x=304, pitch_y=184, x0=64):
-        self.b = brand
+    def __init__(self, card_w=240, card_h=96, pitch_x=304, pitch_y=184, x0=64):
         self.cw, self.ch, self.px, self.py, self.x0 = card_w, card_h, pitch_x, pitch_y, x0
         self.marker = 0
         self.bg, self.arrows, self.cards, self.labels = [], [], [], []
@@ -58,11 +57,11 @@ class Flow:
             self.seg(x1, y1, x2, y2, last, dashed)
 
     def side_label(self, x, y, text):
-        self.labels.append(f'<div style="position: absolute; left: {x}px; top: {y}px; font-size: 13px; line-height: 16px; font-weight: 600; color: #33454E;">{E(text)}</div>')
+        self.labels.append(f'<div style="position: absolute; left: {x}px; top: {y}px; font-size: 13px; line-height: 16px; font-weight: 600; color: var(--ink-2);">{E(text)}</div>')
 
     def centre_label(self, x, y, text):
         w = max(28, 8 * len(text) + 8)
-        self.labels.append(f'<div style="position: absolute; left: {x - w // 2}px; top: {y}px; width: {w}px; text-align: center; font-size: 13px; line-height: 16px; font-weight: 600; color: #33454E;">{E(text)}</div>')
+        self.labels.append(f'<div style="position: absolute; left: {x - w // 2}px; top: {y}px; width: {w}px; text-align: center; font-size: 13px; line-height: 16px; font-weight: 600; color: var(--ink-2);">{E(text)}</div>')
 
     def edge(self, a, b, text=None, dashed=False):
         s, t = self.nodes[a], self.nodes[b]
@@ -90,43 +89,43 @@ class Flow:
                 self.centre_label((x_edge + t["cx"]) // 2, s["cy"] - 28, text)
 
     def card(self, nid, title, refs=""):
-        n, b = self.nodes[nid], self.b
+        n = self.nodes[nid]
         left, top = n["cx"] - n["w"] // 2, n["cy"] - n["h"] // 2
-        refs_html = f'<br><span style="font-size: 12px; font-weight: 600; color: #4A5C66;">{E(refs)}</span>' if refs else ""
-        base = f"position: absolute; left: {left}px; top: {top}px; width: {n['w']}px; height: {n['h']}px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 14px; line-height: 18px; color: {b['ink']};"
+        refs_html = f'<br><span style="font-size: 12px; font-weight: 600; color: var(--muted);">{E(refs)}</span>' if refs else ""
+        base = f"position: absolute; left: {left}px; top: {top}px; width: {n['w']}px; height: {n['h']}px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 14px; line-height: 18px; color: var(--ink);"
         kind = n["kind"]
         body = f"<span>{E(title)}{refs_html}</span>"
         if kind == "decision":
-            style = base + " padding: 10px 46px; background: #FFF1D6; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); font-weight: 600; font-size: 13px; line-height: 16px;"
+            style = base + " padding: 10px 46px; background: color-mix(in srgb,var(--warning) 20%,var(--surface)); clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); font-weight: 600; font-size: 13px; line-height: 16px;"
             body = E(title)
         elif kind == "end":
-            style = base + f" padding: 8px 16px; background: {b['accent']}; border-radius: 32px; font-weight: 700;"
+            style = base + f" padding: 8px 16px; background: var(--primary); color: var(--on-primary); border-radius: 32px; font-weight: 700;"
         elif kind == "system":
-            style = base + " padding: 10px 14px; border: 2px dashed #8C9A95; font-style: italic;"
+            style = base + " padding: 10px 14px; border: 2px dashed var(--muted); font-style: italic;"
         elif kind == "push":
-            style = base + f" padding: 10px 14px; background: {b['feature_soft']}; border: 1px solid {b['feature_line']};"
+            style = base + f" padding: 10px 14px; background: color-mix(in srgb,var(--feature) 12%,var(--surface)); border: 1px solid color-mix(in srgb,var(--feature) 40%,var(--surface));"
         elif kind == "state":
-            style = base + f" padding: 10px 14px; background: #FFFFFF; border: 2px solid {b['ink']}; border-radius: 48px; font-weight: 700;"
+            style = base + f" padding: 10px 14px; background: var(--surface); border: 2px solid var(--ink); border-radius: 48px; font-weight: 700;"
         elif kind == "step":
-            style = base + " padding: 10px 14px; background: #FFFFFF; border: 1px solid #C3CBC7;"
+            style = base + " padding: 10px 14px; background: var(--surface); border: 1px solid var(--line);"
             body = f"<span><b>{E(title)}</b>{refs_html}</span>"
         else:
             raise ValueError(f"unknown node kind {kind!r} on {nid}")
         self.cards.append(f'<div style="{style}">{body}</div>')
 
     def lane(self, top, height, title, tag):
-        self.bg.append(f'<div style="position: absolute; left: 32px; top: {top}px; width: {FLOW_W - 64}px; height: {height}px; background: #F3F2EC; border: 1px solid #D6DBD7;"></div>')
+        self.bg.append(f'<div style="position: absolute; left: 32px; top: {top}px; width: {FLOW_W - 64}px; height: {height}px; background: var(--soft); border: 1px solid var(--line);"></div>')
         self.labels.append(f'<div style="position: absolute; left: 48px; top: {top + 16}px; display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700;"><span class="chip chip-ink">{E(tag)}</span><span>{E(title)}</span></div>')
 
 
-def legend_html(brand, top, items):
+def legend_html(top, items):
     swatch = {
-        "step": "background: #FFFFFF; border: 1px solid #C3CBC7;",
-        "decision": "background: #FFF1D6; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);",
-        "system": "border: 2px dashed #8C9A95;",
-        "push": f"background: {brand['feature_soft']}; border: 1px solid {brand['feature_line']};",
-        "end": f"background: {brand['accent']}; border-radius: 10px;",
-        "state": f"background: #FFFFFF; border: 2px solid {brand['ink']}; border-radius: 10px;",
+        "step": "background: var(--surface); border: 1px solid var(--line);",
+        "decision": "background: color-mix(in srgb,var(--warning) 20%,var(--surface)); clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);",
+        "system": "border: 2px dashed var(--muted);",
+        "push": f"background: color-mix(in srgb,var(--feature) 12%,var(--surface)); border: 1px solid color-mix(in srgb,var(--feature) 40%,var(--surface));",
+        "end": f"background: var(--primary); border-radius: 10px;",
+        "state": f"background: var(--surface); border: 2px solid var(--ink); border-radius: 10px;",
     }
     spans = "".join(
         f'<span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px;"><span style="width: 26px; height: 18px; box-sizing: border-box; {swatch[k]}"></span>{E(t)}</span>'
@@ -137,11 +136,11 @@ def legend_html(brand, top, items):
 
 def render(spec, flow, legend, **flow_kw):
     """Returns (html, height) for one flow board."""
-    f = Flow(spec["_brand"], **flow_kw)
+    f = Flow(**flow_kw)
     hdr = f"""<div style="position: absolute; left: 64px; top: 64px; width: 1340px; display: flex; flex-direction: column; gap: 10px;">
   <div class="eyebrow">{E(flow['eyebrow'])}</div>
   <h1 class="serif" style="font-size: 48px; line-height: 1.05;">{E(flow['title'])}</h1>
-  <p style="font-size: 17px; line-height: 1.5; color: #33454E; max-width: 1180px;">{E(flow['lead'])}</p>
+  <p style="font-size: 17px; line-height: 1.5; color: var(--ink-2); max-width: 1180px;">{E(flow['lead'])}</p>
 </div>"""
     y = 300
     for ln in flow["lanes"]:
@@ -159,8 +158,8 @@ def render(spec, flow, legend, **flow_kw):
     footer = ""
     total = y
     if flow.get("footer"):
-        footer = f'<div style="position: absolute; left: 64px; top: {y}px; width: 1500px; font-size: 13px; line-height: 1.5; color: #4A5C66;">{E(flow["footer"])}</div>'
+        footer = f'<div style="position: absolute; left: 64px; top: {y}px; width: 1500px; font-size: 13px; line-height: 1.5; color: var(--muted);">{E(flow["footer"])}</div>'
         total += 40
-    inner = "".join(f.bg) + "".join(f.arrows) + "".join(f.cards) + "".join(f.labels) + hdr + legend_html(spec["_brand"], 232, legend) + footer
+    inner = "".join(f.bg) + "".join(f.arrows) + "".join(f.cards) + "".join(f.labels) + hdr + legend_html(232, legend) + footer
     h = round20(total)
     return page(spec, flow["title"], FLOW_W, h, inner, root_style="display: block; padding: 0;"), h

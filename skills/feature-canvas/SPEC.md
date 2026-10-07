@@ -18,9 +18,25 @@ Prose refs such as `"W01 · B1.2"` in flow nodes and journeys are checked: every
 
 `title`, `product`, `feature`, `lead` (one or two sentences for the cover), `now` (the sample world's clock). *Optional:* `model_title`, `model_lead`, `roadmap_lead`.
 
-## BRAND *(optional)*
+## BRAND
 
-Overrides the default kit: `ink` (text and dark fills), `accent` (buttons and outcomes; must carry ink text), `feature` (the one colour that marks the new feature on existing screens), `ground`, `serif`, `sans` (Google Fonts family names). Soft and darker tints are derived.
+The product's look; `scripts/brand.py <repo>` proposes it, with a source for every value. Every key is optional; a missing one keeps the kit default. Colours are any CSS colour (`#0e2f3e`, `rgb()`, `oklch()`); tints are mixed in the browser.
+
+| Key | What it drives |
+|---|---|
+| `mode` | `"light"` or `"dark"`: the scheme the wireframes show |
+| `background` | screen background inside the device frames |
+| `surface` | cards, panels, sidebars, dialogs |
+| `text` | body text and dark fills |
+| `muted` | secondary text and icons |
+| `border` | borders and dividers |
+| `primary`, `on_primary` | primary buttons, the active tab, flow outcomes and roadmap order marks, plus the text on them |
+| `success`, `warning`, `danger` | status chips and messages |
+| `feature` | the one colour that marks the new feature on existing screens; pick one the product doesn't already use |
+| `radius`, `radius_phone` | corner radius on web and on phone |
+| `font_sans`, `font_display` | body and heading families, loaded from Google Fonts. A family Google doesn't host falls back to the system font, so say so in the report. |
+
+The canvas around the screens uses the product's fonts and primary colour. On a light product it also uses the product's text, muted and border colours. On a dark product it stays light paper, so the notes stay readable. To override that, set `canvas_ground`, `canvas_ink`, `canvas_muted` and `canvas_line`. `marker` sets the red of the numbered markers.
 
 ## SURFACES
 

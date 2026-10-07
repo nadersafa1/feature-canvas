@@ -7,34 +7,90 @@ import runpy
 HERE = os.path.dirname(os.path.abspath(__file__))
 E = html.escape
 
-DEFAULT_BRAND = {
-    "ink": "#0E2F3E",      # text, dark fills, the Web surface
-    "accent": "#C4D433",   # primary buttons, outcomes, live chips; must carry ink text
-    "feature": "#7A45E6",  # the one colour that marks the new feature on existing screens
-    "ground": "#E9E7E0",   # the canvas behind every board
-    "serif": "Hedvig Letters Serif",
-    "sans": "Inter",
+# Screen tokens: what the product looks like inside the device frames. brand.py proposes them from
+# the project's own CSS variables, Tailwind config, theme files and font imports.
+SCREEN_DEFAULTS = {
+    "mode": "light",
+    "background": "#F5F6F2",
+    "surface": "#FFFFFF",
+    "text": "#0E2F3E",
+    "muted": "#4A5C66",
+    "border": "#D5DBE0",
+    "primary": "#C4D433",
+    "on_primary": "#0E2F3E",
+    "feature": "#7A45E6",
+    "success": "#6B8E23",
+    "warning": "#E8A33A",
+    "danger": "#D93A3A",
+    "radius": "0px",
+    "radius_phone": "14px",
+    "font_sans": "Inter",
+    "font_display": "",
 }
+
+# Canvas tokens: the paper around the screens (notes, flows, roadmap). On a light product they
+# follow the product's text, muted and border colours; on a dark one they stay a light paper.
+CANVAS_DEFAULTS = {
+    "canvas_ground": "#E9E7E0",
+    "canvas_ink": "#0E2F3E",
+    "canvas_muted": "#4A5C66",
+    "canvas_line": "#D6DBD7",
+    "marker": "#C8361A",
+}
+
+LEGACY_KEYS = {"ink": "text", "accent": "primary", "serif": "font_display", "sans": "font_sans", "ground": "canvas_ground"}
 
 SIZE_PTS = {"S": 1, "M": 2, "L": 3}
 
 
-def mix(hex_a, hex_b, t):
-    """Blend hex_a towards hex_b by t (0..1)."""
-    a = [int(hex_a[i:i + 2], 16) for i in (1, 3, 5)]
-    b = [int(hex_b[i:i + 2], 16) for i in (1, 3, 5)]
-    return "#" + "".join(f"{round(x + (y - x) * t):02X}" for x, y in zip(a, b))
-
-
 def brand_tokens(spec):
-    b = {**DEFAULT_BRAND, **spec.get("BRAND", {})}
-    b["accent_soft"] = mix(b["accent"], "#FFFFFF", 0.82)
-    b["accent_line"] = mix(b["accent"], "#FFFFFF", 0.45)
-    b["accent_ink"] = mix(b["accent"], "#000000", 0.6)
-    b["feature_soft"] = mix(b["feature"], "#FFFFFF", 0.88)
-    b["feature_line"] = mix(b["feature"], "#FFFFFF", 0.6)
-    b["feature_ink"] = mix(b["feature"], "#000000", 0.4)
+    given = {LEGACY_KEYS.get(k, k): v for k, v in spec.get("BRAND", {}).items()}
+    b = {**SCREEN_DEFAULTS, **CANVAS_DEFAULTS, **given}
+    if b["mode"] == "light":
+        for key, src in (("canvas_ink", "text"), ("canvas_muted", "muted"), ("canvas_line", "border")):
+            if key not in given:
+                b[key] = b[src]
+    for key in ("font_sans", "font_display"):
+        b[key] = b[key].replace(" Variable", "").strip().strip("'\"")
+    b["font_display"] = b["font_display"] or b["font_sans"]
     return b
+
+
+def font_stack(name, fallback):
+    return f"'{name}', {fallback}"
+
+
+def css_vars(b):
+    """The :root block that feeds kit.css. Text on tinted fills is mixed towards black on light
+    surfaces and towards white on dark ones, so status chips stay readable in either mode."""
+    on_dark = b["mode"] == "dark"
+    tone = lambda var, light_pct=55, dark_pct=45: (  # noqa: E731
+        f"color-mix(in srgb,var({var}) {dark_pct}%,#fff)" if on_dark else f"color-mix(in srgb,var({var}) {light_pct}%,#000)")
+    light_tone = lambda var, pct=55: f"color-mix(in srgb,var({var}) {pct}%,#000)"  # noqa: E731
+    root = {
+        "--font-sans": font_stack(b["font_sans"], "system-ui, -apple-system, sans-serif"),
+        "--font-display": font_stack(b["font_display"], "Georgia, serif" if b["font_display"] != b["font_sans"] else "system-ui, sans-serif"),
+        "--primary": b["primary"], "--on-primary": b["on_primary"], "--feature": b["feature"],
+        "--success": b["success"], "--warning": b["warning"], "--danger": b["danger"], "--marker": b["marker"],
+        "--primary-text": light_tone("--primary", 45), "--feature-text": light_tone("--feature", 60),
+        "--success-text": light_tone("--success", 55), "--warning-text": light_tone("--warning", 45),
+        "--danger-text": light_tone("--danger", 60),
+        "--ground": b["canvas_ground"], "--surface": "#FFFFFF", "--ink": b["canvas_ink"],
+        "--ink-2": "color-mix(in srgb,var(--ink) 85%,var(--ground))", "--muted": b["canvas_muted"],
+        "--line": b["canvas_line"], "--line-soft": "color-mix(in srgb,var(--line) 60%,#fff)",
+        "--soft": "color-mix(in srgb,var(--ink) 5%,#fff)", "--soft-2": "color-mix(in srgb,var(--ink) 11%,#fff)",
+        "--radius": "0px",
+        "--s-background": b["background"], "--s-surface": b["surface"], "--s-text": b["text"],
+        "--s-text-2": "color-mix(in srgb,var(--s-text) 85%,var(--s-surface))", "--s-muted": b["muted"],
+        "--s-border": b["border"], "--s-border-soft": "color-mix(in srgb,var(--s-border) 60%,var(--s-surface))",
+        "--s-soft": "color-mix(in srgb,var(--s-text) 5%,var(--s-surface))",
+        "--s-soft-2": "color-mix(in srgb,var(--s-text) 11%,var(--s-surface))",
+        "--s-radius": b["radius"], "--s-radius-phone": b["radius_phone"],
+        "--s-primary-text": tone("--primary", 45, 70), "--s-feature-text": tone("--feature", 60, 55),
+        "--s-success-text": tone("--success", 55, 60), "--s-warning-text": tone("--warning", 45, 70),
+        "--s-danger-text": tone("--danger", 60, 55),
+    }
+    return ":root{" + ";".join(f"{k}:{v}" for k, v in root.items()) + "}\n"
 
 
 def load_spec(work_dir):
@@ -47,19 +103,14 @@ def load_spec(work_dir):
 
 
 def helmet(spec):
-    """The exact <helmet> every board carries: fonts plus the brand-filled kit."""
+    """The exact <helmet> every board carries: the product's fonts, its tokens, then the kit."""
     b = spec["_brand"]
-    css = open(os.path.join(HERE, "kit.css"), encoding="utf-8").read()
-    for key, value in b.items():
-        css = css.replace(f"@@{key}@@", value)
-    fam = lambda name, spec_: name.replace(" ", "+") + spec_  # noqa: E731
-    fonts = (
-        '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family='
-        + fam(b["serif"], "")
-        + "&amp;family="
-        + fam(b["sans"], ":wght@400;500;600;700")
-        + '&amp;display=swap">'
-    )
+    css = css_vars(b) + open(os.path.join(HERE, "kit.css"), encoding="utf-8").read()
+    families = [b["font_sans"] + ":wght@400;500;600;700"]
+    if b["font_display"] != b["font_sans"]:
+        families.append(b["font_display"])
+    query = "&amp;".join("family=" + f.replace(" ", "+") for f in families)
+    fonts = f'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?{query}&amp;display=swap">'
     return f"<helmet>\n{fonts}\n<style>\n{css}</style>\n</helmet>"
 
 
@@ -141,7 +192,7 @@ def header(eyebrow, title, lead, size=52, lead_w=960):
     return f"""<header style="display: flex; flex-direction: column; gap: 12px;">
   <div class="eyebrow">{E(eyebrow)}</div>
   <h1 class="serif" style="font-size: {size}px; line-height: 1.05;">{E(title)}</h1>
-  <p style="font-size: 18px; line-height: 1.5; color: #33454E; max-width: {lead_w}px;">{lead}</p>
+  <p style="font-size: 18px; line-height: 1.5; color: var(--ink-2); max-width: {lead_w}px;">{lead}</p>
 </header>"""
 
 

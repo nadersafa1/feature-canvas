@@ -16,6 +16,7 @@ from common import all_stories, helmet, load_spec, project_dir, screen_file
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr",
         "path", "circle", "rect", "line", "polyline", "polygon", "ellipse", "stop"}
 EMOJI = re.compile("[\U0001F300-\U0001FAFF☀-➿⭐✅]")
+HARD_COLOUR = re.compile(r"#[0-9A-Fa-f]{6}\b|#[0-9A-Fa-f]{3}\b|rgba?\([^)]*\)|hsla?\([^)]*\)")
 REF = re.compile(r"\b([A-Z]{1,3}\d{1,3}(?:\.\d{1,3})?)\b")
 SIZES = {"S", "M", "L"}
 KINDS = {"web", "phone"}
@@ -187,6 +188,12 @@ def check_board(path, spec):
     parser.feed(body)
     errs += parser.errs + [f"unclosed <{t}> opened at {pos}" for t, pos in parser.stack]
     text = re.sub(r"<[^>]+>", " ", body)
+    screens = {screen_file(sc) for sc in spec.get("SCREENS", [])}
+    if os.path.basename(path) in screens:
+        drawn = body.split("</helmet>", 1)[-1]
+        colours = sorted(set(HARD_COLOUR.findall(drawn)))
+        if colours:
+            errs.append("hard-coded colours " + ", ".join(colours[:6]) + ": use kit classes or var(--ink), var(--muted), var(--line), var(--surface), var(--primary)… so the board follows the product's brand")
     for word, instead in spec.get("VOCABULARY", {}).get("never", {}).items():
         if re.search(rf"\b{re.escape(word)}\b", text, re.I):
             errs.append(f"uses {word!r}: {instead}")
