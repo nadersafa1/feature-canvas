@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<style>
+:root{--bg:#E9E7E0;--panel:#FFFFFF;--text:#0E2F3E;--muted:#4A5C66;--line:#D6DBD7;--chip:#ECEEE9;--bad:#A61B1B}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#11191D;--panel:#1A252B;--text:#E7ECEE;--muted:#A9B6BC;--line:#2E3B42;--chip:#25323A;--bad:#FF8A80}}
+:root[data-theme="dark"]{--bg:#11191D;--panel:#1A252B;--text:#E7ECEE;--muted:#A9B6BC;--line:#2E3B42;--chip:#25323A;--bad:#FF8A80}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:12px 16px;background:var(--panel);border-bottom:1px solid var(--line)}
+h1{margin:0;font-size:17px;font-weight:700;flex:1 1 220px}
+nav{display:flex;flex-wrap:wrap;gap:6px}
+button,select{font:inherit;color:var(--text);background:var(--chip);border:1px solid var(--line);border-radius:8px;min-height:36px;padding:0 12px;cursor:pointer}
+button[aria-selected="true"]{background:var(--text);color:var(--panel);border-color:var(--text)}
+main{padding:16px}
+h2{margin:28px 0 12px;font-size:15px;font-weight:700}
+.row{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+.thumb{display:flex;flex-direction:column;gap:6px;max-width:100%}
+.frame{position:relative;overflow:hidden;border:1px solid var(--line);background:#fff;padding:0;border-radius:4px;max-width:100%}
+.frame iframe{border:0;transform-origin:0 0;pointer-events:none;display:block}
+.cap{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.bad{color:var(--bad);font-weight:700}
+dialog{width:min(96vw,1700px);max-height:94vh;padding:0;border:1px solid var(--line);background:var(--panel);color:var(--text)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+.dlg-head{position:sticky;top:0;display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--panel);border-bottom:1px solid var(--line)}
+.dlg-head b{flex:1}
+.dlg-body{overflow:auto;max-height:calc(94vh - 58px)}
+textarea{width:100%;min-height:220px;font:12px/1.4 ui-monospace,monospace;background:var(--bg);color:var(--text);border:1px solid var(--line);padding:10px}
+.pad{padding:14px;display:flex;flex-direction:column;gap:10px}
+</style>
+</head>
+<body>
+<header>
+<h1>__TITLE__</h1>
+<nav id="tabs" role="tablist" aria-label="Canvas pages"></nav>
+<label class="cap" for="zoom">Zoom <select id="zoom"><option value="0.25">25%</option><option value="0.4" selected>40%</option><option value="0.6">60%</option><option value="1">100%</option></select></label>
+<button type="button" id="heights">Board heights</button>
+</header>
+<main id="main"></main>
+<dialog id="dlg"><div class="dlg-head"><b id="dlg-title"></b><button type="button" id="dlg-close">Close</button></div><div class="dlg-body" id="dlg-body"></div></dialog>
+<script type="application/json" id="boards">__DATA__</script>
+<script>
+const items = JSON.parse(document.getElementById("boards").textContent);
+const measured = {};
+const pages = [...new Set(items.map((i) => i.page))];
+let current = pages[0];
+
+function extent(el, clip, top) {
+  let max = 0;
+  for (const c of el.children) {
+    const r = c.getBoundingClientRect();
+    const cs = getComputedStyle(c);
+    if (r.width > 0 || r.height > 0) max = Math.max(max, Math.min(r.bottom, clip) - top);
+    const clips = cs.overflowY !== "visible" || cs.overflow !== "visible";
+    max = Math.max(max, extent(c, clips ? Math.min(clip, r.bottom) : clip, top));
+  }
+  return max;
+}
+
+function fit(iframe, item, scale, wrap, cap) {
+  const doc = iframe.contentDocument;
+  const board = doc && doc.querySelector(".board");
+  if (!board) return;
+  const top = board.getBoundingClientRect().top;
+  const pad = Math.max(parseFloat(getComputedStyle(board).paddingBottom) || 0, 32);
+  const need = Math.ceil(extent(board, Infinity, top) + pad);
+  measured[item.file] = need;
+  const shown = Math.max(item.h, need);
+  board.style.height = shown + "px";
+  iframe.style.height = shown + "px";
+  wrap.style.height = shown * scale + "px";
+  if (need > item.h) cap.insertAdjacentHTML("beforeend", ` <span class="bad">clipped by ${need - item.h}px</span>`);
+}
+
+function boardFrame(item, scale, cap) {
+  const wrap = document.createElement("div");
+  wrap.className = "frame";
+  wrap.style.width = item.w * scale + "px";
+  wrap.style.height = item.h * scale + "px";
+  const iframe = document.createElement("iframe");
+  iframe.title = item.title;
+  iframe.setAttribute("sandbox", "allow-same-origin");
+  iframe.style.width = item.w + "px";
+  iframe.style.height = item.h + "px";
+  iframe.style.transform = `scale(${scale})`;
+  iframe.addEventListener("load", () => fit(iframe, item, scale, wrap, cap));
+  iframe.srcdoc = item.doc;
+  wrap.append(iframe);
+  return wrap;
+}
+
+function render() {
+  const scale = parseFloat(document.getElementById("zoom").value);
+  const main = document.getElementById("main");
+  main.replaceChildren();
+  let rowTitle = null;
+  let row = null;
+  for (const item of items.filter((i) => i.page === current)) {
+    if (item.row !== rowTitle) {
+      rowTitle = item.row;
+      const h2 = document.createElement("h2");
+      h2.textContent = rowTitle;
+      row = document.createElement("div");
+      row.className = "row";
+      main.append(h2, row);
+    }
+    const thumb = document.createElement("button");
+    thumb.type = "button";
+    thumb.className = "thumb";
+    thumb.style.background = "transparent";
+    thumb.style.border = "0";
+    thumb.style.padding = "0";
+    thumb.setAttribute("aria-label", `Open ${item.title}`);
+    const cap = document.createElement("span");
+    cap.className = "cap";
+    cap.textContent = `${item.title} · ${item.w}×${item.h}`;
+    thumb.append(boardFrame(item, scale, cap), cap);
+    thumb.addEventListener("click", () => openBoard(item));
+    row.append(thumb);
+  }
+  for (const b of document.querySelectorAll("#tabs button")) b.setAttribute("aria-selected", String(b.dataset.page === current));
+}
+
+function openBoard(item) {
+  const body = document.getElementById("dlg-body");
+  body.replaceChildren();
+  const cap = document.createElement("span");
+  const scale = Math.min(1, (Math.min(window.innerWidth * 0.96, 1700) - 4) / item.w);
+  body.append(boardFrame(item, scale, cap));
+  document.getElementById("dlg-title").textContent = item.title;
+  document.getElementById("dlg").showModal();
+}
+
+function showHeights() {
+  const out = {};
+  for (const item of items) {
+    const need = measured[item.file];
+    if (need && Math.abs(need - item.h) >= 20) out[item.file.replace(/\.dc\.html$/, "")] = need;
+  }
+  const body = document.getElementById("dlg-body");
+  const unseen = items.filter((i) => !(i.file in measured)).length;
+  body.innerHTML = `<div class="pad"><p>Boards whose height is off by 20px or more, as measured here. Paste this into <code>fit.py</code>. ${unseen ? `<b>${unseen} boards not measured yet: open every page first.</b>` : "Every board measured."}</p><textarea readonly aria-label="Heights JSON"></textarea></div>`;
+  body.querySelector("textarea").value = JSON.stringify(out, null, 1);
+  document.getElementById("dlg-title").textContent = "Board heights";
+  document.getElementById("dlg").showModal();
+}
+
+const tabs = document.getElementById("tabs");
+for (const p of pages) {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.setAttribute("role", "tab");
+  b.dataset.page = p;
+  b.textContent = p;
+  b.addEventListener("click", () => { current = p; render(); });
+  tabs.append(b);
+}
+document.getElementById("zoom").addEventListener("change", render);
+document.getElementById("heights").addEventListener("click", showHeights);
+document.getElementById("dlg-close").addEventListener("click", () => document.getElementById("dlg").close());
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>W01 Week schedule</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:#E9E7E0;font-family:'Inter',system-ui,-apple-system,sans-serif;color:#0E2F3E}
+*{box-sizing:border-box}
+p,h1,h2,h3,h4,ul,ol{margin:0}
+ul,ol{padding:0;list-style:none}
+a{color:#0E2F3E}a:hover{color:#4E5514}
+button{font-family:inherit;cursor:pointer}
+.board{position:relative;display:flex;gap:40px;padding:32px;background:#E9E7E0;overflow:hidden}
+.serif{font-family:'Hedvig Letters Serif',Georgia,serif;font-weight:400;letter-spacing:-.01em}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#4A5C66}
+.muted{color:#4A5C66}
+.tnum{font-variant-numeric:tabular-nums}
+.b{font-weight:700}
+.mk{display:inline-flex;align-items:center;justify-content:center;flex:none;width:20px;height:20px;border-radius:50%;background:#C8361A;color:#fff;font-size:11px;font-weight:700;line-height:1;vertical-align:middle;box-shadow:0 0 0 2px #fff}
+.rel{position:relative}
+.mka{position:absolute;top:-9px;left:-9px;z-index:6}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 14px;border:1px solid #C3CBC7;background:#fff;color:#0E2F3E;font-size:13px;font-weight:600;white-space:nowrap;text-decoration:none}
+.btn-cta{background:#C4D433;border-color:#C4D433;color:#0E2F3E}
+.btn-ink{background:#0E2F3E;border-color:#0E2F3E;color:#fff}
+.btn-ghost{background:transparent;border-color:transparent}
+.btn-danger{color:#A61B1B}
+.btn-sm{height:28px;padding:0 10px;font-size:12px}
+.chip{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border:1px solid #C3CBC7;background:#fff;color:#0E2F3E;font-size:11px;font-weight:600;white-space:nowrap}
+.chip-live{background:#C4D433;border-color:#C4D433;color:#0E2F3E}
+.chip-ink{background:#0E2F3E;border-color:#0E2F3E;color:#fff}
+.chip-warn{background:#FFF1D6;border-color:#F0C66E;color:#6E4300}
+.chip-bad{background:#FDE8E8;border-color:#F2AFAF;color:#8F1717}
+.chip-ok{background:#F4F7DA;border-color:#DFE78F;color:#4E5514}
+.chip-muted{background:#ECEEE9;border-color:#ECEEE9;color:#4A5C66}
+.chip-dash{border-style:dashed;color:#4A5C66;background:transparent}
+.chip-feat{background:#EFE9FC;border-color:#CAB5F5;color:#49298A}
+.feat-rail{border-left:4px solid #7A45E6}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#0E2F3E;flex:none}
+.card{background:#fff;border:1px solid #D6DBD7}
+.hr{height:1px;background:#E3E6E1;flex:none}
+.ph{background:repeating-linear-gradient(135deg,#ECEEE9 0 8px,#E2E6E0 8px 16px)}
+.field{display:flex;align-items:center;gap:8px;height:34px;padding:0 10px;border:1px solid #C3CBC7;background:#fff;font-size:13px;color:#0E2F3E}
+.field input{flex:1;min-width:0;height:100%;border:0;outline:0;background:transparent;font:inherit;color:#0E2F3E}
+::placeholder{color:#4A5C66;opacity:1}
+.lbl{display:block;font-size:12px;font-weight:600;color:#4A5C66;margin-bottom:6px}
+.help{font-size:12px;color:#4A5C66;line-height:1.45}
+.soft{background:#F5F6F2}
+.accent-soft{background:#F4F7DA}
+.sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.row{display:flex;align-items:center;gap:12px}
+.lnk{font-size:14px;font-weight:600;color:#0E2F3E;text-decoration:underline;text-underline-offset:3px}
+.i,.ic{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic{width:16px;height:16px}
+.av{width:40px;height:40px;flex:none;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#DCE3E6;color:#0E2F3E;font-size:13px;font-weight:700}
+.av-sm{width:28px;height:28px;font-size:11px;background:#0E2F3E;color:#fff}
+.notes{width:286px;flex:none;display:flex;flex-direction:column;gap:16px;padding-top:6px}
+.notes h1{font-family:'Hedvig Letters Serif',Georgia,serif;font-weight:400;font-size:30px;line-height:1.1;letter-spacing:-.01em}
+.notes .lead{font-size:14px;line-height:1.5;color:#33454E}
+.notes li{display:flex;gap:10px;font-size:13px;line-height:1.45;color:#0E2F3E}
+.notes ol{display:flex;flex-direction:column;gap:13px}
+.browser{flex:none;display:flex;flex-direction:column;background:#fff;border:1px solid #B9C1BD;box-shadow:0 14px 36px rgba(14,47,62,.14);overflow:hidden}
+.urlbar{height:40px;flex:none;display:flex;align-items:center;gap:12px;padding:0 14px;background:#ECEEE9;border-bottom:1px solid #D6DBD7}
+.urlbar .u{flex:1;height:26px;display:flex;align-items:center;padding:0 12px;background:#fff;border:1px solid #D6DBD7;border-radius:13px;font-size:12px;color:#4A5C66}
+.bd{width:10px;height:10px;border-radius:50%;background:#C3CBC7;flex:none}
+.app{flex:1;display:flex;min-height:0;background:#F5F6F2;position:relative}
+.sidebar{width:212px;flex:none;display:flex;flex-direction:column;gap:2px;padding:16px 12px;background:#fff;border-right:1px solid #D6DBD7}
+.nav{display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;font-size:13px;color:#33454E;text-decoration:none}
+.nav-on{background:#F4F7DA;color:#0E2F3E;font-weight:700}
+.navhead{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#4A5C66;padding:14px 10px 6px}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.top{height:56px;flex:none;display:flex;align-items:center;gap:8px;padding:0 24px;background:#fff;border-bottom:1px solid #D6DBD7}
+.crumb{flex:1;font-size:13px;color:#4A5C66}
+.crumb a{color:#4A5C66;text-decoration:none}
+.crumb b{color:#0E2F3E;font-weight:600}
+.tabs{display:flex;gap:26px;border-bottom:1px solid #D6DBD7;flex:none}
+.tab{display:inline-flex;align-items:center;gap:6px;padding:10px 0;font-size:13px;font-weight:600;color:#4A5C66;text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab-on{color:#0E2F3E;border-bottom-color:#C4D433}
+.seg{display:inline-flex;border:1px solid #C3CBC7;background:#fff;flex:none}
+.seg button{height:32px;padding:0 10px;border:0;border-left:1px solid #E3E6E1;background:#fff;font-size:12px;font-weight:600;color:#33454E}
+.seg button:first-child{border-left:0}
+.seg .on{background:#0E2F3E;color:#fff}
+table{border-collapse:collapse;width:100%}
+th{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#4A5C66;text-align:left;padding:8px 10px;border-bottom:1px solid #D6DBD7;background:#F5F6F2}
+td{font-size:13px;padding:9px 10px;border-bottom:1px solid #E3E6E1;vertical-align:middle}
+.phone{flex:none;width:410px;border:10px solid #0A1F28;border-radius:52px;background:#F5F6F2;overflow:hidden;position:relative;box-shadow:0 14px 36px rgba(14,47,62,.18)}
+.n{width:390px;display:flex;flex-direction:column;position:relative}
+.n .card{border-radius:14px;border-color:#D5DBE0}
+.n .btn{height:48px;border-radius:12px;font-size:15px;padding:0 18px}
+.n .btn-sm{height:44px;border-radius:10px;font-size:13px;padding:0 12px}
+.n .chip{border-radius:999px}
+.n .field{border-radius:12px;height:46px;font-size:15px;border-color:#D5DBE0}
+.inset{height:44px;flex:none}
+.hdr{flex:none;display:flex;align-items:center;gap:2px;height:52px;padding:0 6px}
+.hdr .t{flex:1;min-width:0;padding:0 4px}
+.ttl{font-size:17px;font-weight:700;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub{font-size:13px;color:#4A5C66;line-height:1.35}
+.ib{position:relative;width:44px;height:44px;flex:none;display:inline-flex;align-items:center;justify-content:center;padding:0;border:0;border-radius:22px;background:transparent;color:#0E2F3E}
+.scroll{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:10px;padding:4px 16px 12px}
+.cta{position:relative;flex:none;background:#fff;border-top:1px solid #D5DBE0;padding:16px 16px 36px}
+.cta .btn{width:100%}
+.tabbar{flex:none;display:flex;background:#fff;border-top:1px solid #D5DBE0;padding:4px 4px 30px}
+.tabbar a{flex:1;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:600;color:#4A5C66;text-decoration:none}
+.tabbar .on{color:#0E2F3E}
+.steps{display:inline-flex;align-items:center;gap:4px}
+.sd{width:8px;height:8px;border-radius:4px;background:#C3CBC7}
+.sd-done{background:#0E2F3E}
+.sd-on{width:20px;background:#0E2F3E}
+.radio{width:22px;height:22px;flex:none;border-radius:50%;border:2px solid #6B7B82;background:#fff}
+.pick{display:flex;align-items:center;gap:12px;padding:10px 14px;cursor:pointer}
+.nm{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:600}
+.n .pill{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 16px;border:1px solid #C3CBC7;border-radius:999px;background:#fff;color:#0E2F3E;font-size:14px;font-weight:600;white-space:nowrap}
+.n .pill-on{background:#0E2F3E;border-color:#0E2F3E;color:#fff}
+.scrim{position:absolute;inset:0;background:rgba(14,47,62,.38);z-index:4}
+.dialog{position:absolute;z-index:5;background:#fff;border:1px solid #B9C1BD;box-shadow:0 20px 48px rgba(14,47,62,.28)}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:5;background:#fff;border-radius:20px 20px 0 0;padding:8px 16px 36px}
+.mka{z-index:7}
+</style>
+</helmet>
+<div class="board" style="width: 1640px; height: 980px; ">
+<div class="browser" style="width: 1250px; height: 916px;">
+<div class="urlbar"><span class="bd"></span><span class="bd"></span><span class="bd"></span><div class="u">[web domain]/desk/schedule?week=2026-10-12</div></div>
+<div class="app">
+<nav class="sidebar" aria-label="Desk navigation">
+<div class="serif" style="font-size: 24px; padding: 0 10px 8px;">Pinewood</div>
+<div class="navhead">Today</div>
+<a class="nav" href="#"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h14V10"></path></svg>Front desk</a>
+<a class="nav" href="#"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"></path></svg>Check-in</a>
+<div class="navhead">Classes</div>
+<a class="nav nav-on" href="#" aria-current="page"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>Schedule</a>
+<a class="nav" href="#"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"></path></svg>Class types</a>
+<div class="navhead">Members</div>
+<a class="nav" href="#"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0116 0"></path></svg>Members</a>
+</nav>
+<div class="main">
+<header class="top">
+<nav class="crumb" aria-label="Breadcrumb"><a href="#">Classes</a> / <b>Schedule</b></nav>
+<span class="av av-sm" aria-hidden="true">LP</span><span style="font-size: 12px;">Leo Park · Front desk</span>
+</header>
+<main style="flex: 1; min-height: 0; overflow: hidden; padding: 16px 24px; display: flex; flex-direction: column; gap: 14px;">
+<div style="display: flex; align-items: center; gap: 12px;">
+<button class="btn btn-ghost" type="button" aria-label="Previous week" style="width: 34px; padding: 0;"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></button>
+<h1 style="font-size: 24px; font-weight: 700;">Week of 12 Oct</h1>
+<button class="btn btn-ghost" type="button" aria-label="Next week" style="width: 34px; padding: 0;"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"></path></svg></button>
+<span style="flex: 1;"></span>
+<span class="rel"><span class="mk mka">1</span><button class="btn" type="button">Copy last week</button></span>
+<span class="rel"><span class="mk mka">2</span><button class="btn btn-ink" type="button">Publish 2 drafts</button></span>
+</div>
+<div class="card" style="flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr));">
+<div style="border-right: 1px solid #E3E6E1; padding: 10px; display: flex; flex-direction: column; gap: 8px;"><p class="eyebrow">Mon 12</p><div class="soft" style="padding: 8px; font-size: 12px;"><b>7:00 PM</b> Technique Lab<br><span class="muted">Wall A · 6 of 8</span></div></div>
+<div style="border-right: 1px solid #E3E6E1; padding: 10px; display: flex; flex-direction: column; gap: 8px;"><p class="eyebrow">Tue 13</p><div class="soft" style="padding: 8px; font-size: 12px;"><b>6:00 PM</b> Intro to Bouldering<br><span class="muted">Wall B · 10 of 10</span></div></div>
+<div class="rel" style="border-right: 1px solid #E3E6E1; padding: 10px; display: flex; flex-direction: column; gap: 8px;"><p class="eyebrow">Wed 14</p><div class="rel" style="padding: 8px; font-size: 12px; border: 2px solid #0E2F3E; background: #fff;"><span class="mk mka">3</span><b>6:00 PM</b> Intro to Bouldering<br><span class="muted">Maya Chen · Wall B</span><br><span class="chip chip-warn" style="margin-top: 6px;">8 of 10</span></div></div>
+<div class="rel" style="border-right: 1px solid #E3E6E1; padding: 10px; display: flex; flex-direction: column; gap: 8px;"><p class="eyebrow">Thu 15</p><div class="rel" style="padding: 8px; font-size: 12px; border: 1px dashed #8C9A95;"><span class="mk mka">4</span><b>7:00 PM</b> Technique Lab<br><span class="muted">Draft · Wall A</span><br><span class="chip chip-bad" style="margin-top: 6px;">Maya is teaching at 7:00</span></div><div style="padding: 8px; font-size: 12px; border: 1px dashed #8C9A95;"><b>7:00 PM</b> Youth Climb Club<br><span class="muted">Draft · Maya Chen · Wall C</span></div></div>
+<div style="border-right: 1px solid #E3E6E1; padding: 10px; display: flex; flex-direction: column; gap: 8px;"><p class="eyebrow">Fri 16</p><div style="padding: 8px; font-size: 12px; border: 1px dashed #8C9A95;"><b>7:00 PM</b> Technique Lab<br><span class="muted">Draft · Wall A</span></div></div>
+<div style="border-right: 1px solid #E3E6E1; padding: 10px; display: flex; flex-direction: column; gap: 8px;"><p class="eyebrow">Sat 17</p><div class="soft" style="padding: 8px; font-size: 12px;"><b>10:00 AM</b> Youth Climb Club<br><span class="muted">Ari Gold · Wall C</span><br><span class="chip chip-bad" style="margin-top: 6px;">Full · 2 waiting</span></div></div>
+<div style="padding: 10px; display: flex; flex-direction: column; gap: 8px;"><p class="eyebrow">Sun 18</p></div>
+</div>
+<p class="help">Dashed = draft, only the desk sees it. Members see a class once it is published.</p>
+</main>
+</div>
+</div>
+</div>
+<aside class="notes">
+<div class="eyebrow">Web · Front desk</div>
+<h1>Week schedule</h1>
+<p class="lead">Monday 9:15 AM: Leo has copied last week and has one clash to fix before publishing.</p>
+<div class="hr"></div>
+<ol>
+<li><span class="mk">1</span><div><b>Copy, never publish.</b> Copying makes drafts, so nothing reaches members by accident.</div></li>
+<li><span class="mk">2</span><div><b>The count is the confirmation.</b> Three drafts, but the button says 2: the Thu Technique Lab is held back until its clash is fixed (B1.3).</div></li>
+<li><span class="mk">3</span><div><b>Full before you open it.</b> Each block shows how many places are booked, so the desk sees busy classes at a glance.</div></li>
+<li><span class="mk">4</span><div><b>Clashes are flagged, never moved.</b> The block says what clashes; the desk decides (#2).</div></li>
+</ol>
+<div class="hr"></div>
+<div class="eyebrow">Stories</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px;"><span class="chip">B1.1</span><span class="chip">B1.2</span><span class="chip">B1.3</span></div>
+<div class="eyebrow">Next</div>
+<p class="help">→ W02 Class roster and check-in</p>
+</aside>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1640,"height":980}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

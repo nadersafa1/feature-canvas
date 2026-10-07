@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>M02 Book a class</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:#E9E7E0;font-family:'Inter',system-ui,-apple-system,sans-serif;color:#0E2F3E}
+*{box-sizing:border-box}
+p,h1,h2,h3,h4,ul,ol{margin:0}
+ul,ol{padding:0;list-style:none}
+a{color:#0E2F3E}a:hover{color:#4E5514}
+button{font-family:inherit;cursor:pointer}
+.board{position:relative;display:flex;gap:40px;padding:32px;background:#E9E7E0;overflow:hidden}
+.serif{font-family:'Hedvig Letters Serif',Georgia,serif;font-weight:400;letter-spacing:-.01em}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#4A5C66}
+.muted{color:#4A5C66}
+.tnum{font-variant-numeric:tabular-nums}
+.b{font-weight:700}
+.mk{display:inline-flex;align-items:center;justify-content:center;flex:none;width:20px;height:20px;border-radius:50%;background:#C8361A;color:#fff;font-size:11px;font-weight:700;line-height:1;vertical-align:middle;box-shadow:0 0 0 2px #fff}
+.rel{position:relative}
+.mka{position:absolute;top:-9px;left:-9px;z-index:6}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 14px;border:1px solid #C3CBC7;background:#fff;color:#0E2F3E;font-size:13px;font-weight:600;white-space:nowrap;text-decoration:none}
+.btn-cta{background:#C4D433;border-color:#C4D433;color:#0E2F3E}
+.btn-ink{background:#0E2F3E;border-color:#0E2F3E;color:#fff}
+.btn-ghost{background:transparent;border-color:transparent}
+.btn-danger{color:#A61B1B}
+.btn-sm{height:28px;padding:0 10px;font-size:12px}
+.chip{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border:1px solid #C3CBC7;background:#fff;color:#0E2F3E;font-size:11px;font-weight:600;white-space:nowrap}
+.chip-live{background:#C4D433;border-color:#C4D433;color:#0E2F3E}
+.chip-ink{background:#0E2F3E;border-color:#0E2F3E;color:#fff}
+.chip-warn{background:#FFF1D6;border-color:#F0C66E;color:#6E4300}
+.chip-bad{background:#FDE8E8;border-color:#F2AFAF;color:#8F1717}
+.chip-ok{background:#F4F7DA;border-color:#DFE78F;color:#4E5514}
+.chip-muted{background:#ECEEE9;border-color:#ECEEE9;color:#4A5C66}
+.chip-dash{border-style:dashed;color:#4A5C66;background:transparent}
+.chip-feat{background:#EFE9FC;border-color:#CAB5F5;color:#49298A}
+.feat-rail{border-left:4px solid #7A45E6}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#0E2F3E;flex:none}
+.card{background:#fff;border:1px solid #D6DBD7}
+.hr{height:1px;background:#E3E6E1;flex:none}
+.ph{background:repeating-linear-gradient(135deg,#ECEEE9 0 8px,#E2E6E0 8px 16px)}
+.field{display:flex;align-items:center;gap:8px;height:34px;padding:0 10px;border:1px solid #C3CBC7;background:#fff;font-size:13px;color:#0E2F3E}
+.field input{flex:1;min-width:0;height:100%;border:0;outline:0;background:transparent;font:inherit;color:#0E2F3E}
+::placeholder{color:#4A5C66;opacity:1}
+.lbl{display:block;font-size:12px;font-weight:600;color:#4A5C66;margin-bottom:6px}
+.help{font-size:12px;color:#4A5C66;line-height:1.45}
+.soft{background:#F5F6F2}
+.accent-soft{background:#F4F7DA}
+.sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.row{display:flex;align-items:center;gap:12px}
+.lnk{font-size:14px;font-weight:600;color:#0E2F3E;text-decoration:underline;text-underline-offset:3px}
+.i,.ic{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic{width:16px;height:16px}
+.av{width:40px;height:40px;flex:none;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#DCE3E6;color:#0E2F3E;font-size:13px;font-weight:700}
+.av-sm{width:28px;height:28px;font-size:11px;background:#0E2F3E;color:#fff}
+.notes{width:286px;flex:none;display:flex;flex-direction:column;gap:16px;padding-top:6px}
+.notes h1{font-family:'Hedvig Letters Serif',Georgia,serif;font-weight:400;font-size:30px;line-height:1.1;letter-spacing:-.01em}
+.notes .lead{font-size:14px;line-height:1.5;color:#33454E}
+.notes li{display:flex;gap:10px;font-size:13px;line-height:1.45;color:#0E2F3E}
+.notes ol{display:flex;flex-direction:column;gap:13px}
+.browser{flex:none;display:flex;flex-direction:column;background:#fff;border:1px solid #B9C1BD;box-shadow:0 14px 36px rgba(14,47,62,.14);overflow:hidden}
+.urlbar{height:40px;flex:none;display:flex;align-items:center;gap:12px;padding:0 14px;background:#ECEEE9;border-bottom:1px solid #D6DBD7}
+.urlbar .u{flex:1;height:26px;display:flex;align-items:center;padding:0 12px;background:#fff;border:1px solid #D6DBD7;border-radius:13px;font-size:12px;color:#4A5C66}
+.bd{width:10px;height:10px;border-radius:50%;background:#C3CBC7;flex:none}
+.app{flex:1;display:flex;min-height:0;background:#F5F6F2;position:relative}
+.sidebar{width:212px;flex:none;display:flex;flex-direction:column;gap:2px;padding:16px 12px;background:#fff;border-right:1px solid #D6DBD7}
+.nav{display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;font-size:13px;color:#33454E;text-decoration:none}
+.nav-on{background:#F4F7DA;color:#0E2F3E;font-weight:700}
+.navhead{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#4A5C66;padding:14px 10px 6px}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.top{height:56px;flex:none;display:flex;align-items:center;gap:8px;padding:0 24px;background:#fff;border-bottom:1px solid #D6DBD7}
+.crumb{flex:1;font-size:13px;color:#4A5C66}
+.crumb a{color:#4A5C66;text-decoration:none}
+.crumb b{color:#0E2F3E;font-weight:600}
+.tabs{display:flex;gap:26px;border-bottom:1px solid #D6DBD7;flex:none}
+.tab{display:inline-flex;align-items:center;gap:6px;padding:10px 0;font-size:13px;font-weight:600;color:#4A5C66;text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab-on{color:#0E2F3E;border-bottom-color:#C4D433}
+.seg{display:inline-flex;border:1px solid #C3CBC7;background:#fff;flex:none}
+.seg button{height:32px;padding:0 10px;border:0;border-left:1px solid #E3E6E1;background:#fff;font-size:12px;font-weight:600;color:#33454E}
+.seg button:first-child{border-left:0}
+.seg .on{background:#0E2F3E;color:#fff}
+table{border-collapse:collapse;width:100%}
+th{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#4A5C66;text-align:left;padding:8px 10px;border-bottom:1px solid #D6DBD7;background:#F5F6F2}
+td{font-size:13px;padding:9px 10px;border-bottom:1px solid #E3E6E1;vertical-align:middle}
+.phone{flex:none;width:410px;border:10px solid #0A1F28;border-radius:52px;background:#F5F6F2;overflow:hidden;position:relative;box-shadow:0 14px 36px rgba(14,47,62,.18)}
+.n{width:390px;display:flex;flex-direction:column;position:relative}
+.n .card{border-radius:14px;border-color:#D5DBE0}
+.n .btn{height:48px;border-radius:12px;font-size:15px;padding:0 18px}
+.n .btn-sm{height:44px;border-radius:10px;font-size:13px;padding:0 12px}
+.n .chip{border-radius:999px}
+.n .field{border-radius:12px;height:46px;font-size:15px;border-color:#D5DBE0}
+.inset{height:44px;flex:none}
+.hdr{flex:none;display:flex;align-items:center;gap:2px;height:52px;padding:0 6px}
+.hdr .t{flex:1;min-width:0;padding:0 4px}
+.ttl{font-size:17px;font-weight:700;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub{font-size:13px;color:#4A5C66;line-height:1.35}
+.ib{position:relative;width:44px;height:44px;flex:none;display:inline-flex;align-items:center;justify-content:center;padding:0;border:0;border-radius:22px;background:transparent;color:#0E2F3E}
+.scroll{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:10px;padding:4px 16px 12px}
+.cta{position:relative;flex:none;background:#fff;border-top:1px solid #D5DBE0;padding:16px 16px 36px}
+.cta .btn{width:100%}
+.tabbar{flex:none;display:flex;background:#fff;border-top:1px solid #D5DBE0;padding:4px 4px 30px}
+.tabbar a{flex:1;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:600;color:#4A5C66;text-decoration:none}
+.tabbar .on{color:#0E2F3E}
+.steps{display:inline-flex;align-items:center;gap:4px}
+.sd{width:8px;height:8px;border-radius:4px;background:#C3CBC7}
+.sd-done{background:#0E2F3E}
+.sd-on{width:20px;background:#0E2F3E}
+.radio{width:22px;height:22px;flex:none;border-radius:50%;border:2px solid #6B7B82;background:#fff}
+.pick{display:flex;align-items:center;gap:12px;padding:10px 14px;cursor:pointer}
+.nm{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:600}
+.n .pill{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 16px;border:1px solid #C3CBC7;border-radius:999px;background:#fff;color:#0E2F3E;font-size:14px;font-weight:600;white-space:nowrap}
+.n .pill-on{background:#0E2F3E;border-color:#0E2F3E;color:#fff}
+.scrim{position:absolute;inset:0;background:rgba(14,47,62,.38);z-index:4}
+.dialog{position:absolute;z-index:5;background:#fff;border:1px solid #B9C1BD;box-shadow:0 20px 48px rgba(14,47,62,.28)}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:5;background:#fff;border-radius:20px 20px 0 0;padding:8px 16px 36px}
+.mka{z-index:7}
+</style>
+</helmet>
+<div class="board" style="width: 800px; height: 1020px; ">
+<div class="phone" style="height: 944px;">
+<div class="n" style="height: 924px;">
+<div class="inset"></div>
+<header class="hdr">
+<button class="ib" type="button" aria-label="Back to classes"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></button>
+<div class="t"><h2 class="ttl">Intro to Bouldering</h2><p class="sub">Wed 14 Oct · 6:00–7:00 PM</p></div>
+<button class="ib" type="button" aria-label="Share class"><svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7"></path><path d="M16 6l-4-4-4 4M12 2v13"></path></svg></button>
+</header>
+<main class="scroll">
+<div class="ph" style="height: 150px; border-radius: 14px; display: flex; align-items: flex-end; padding: 12px;"><span class="chip">Beginner · 60 min</span></div>
+<div class="card rel" style="padding: 14px; display: flex; flex-direction: column; gap: 12px;">
+<span class="mk mka">1</span>
+<div class="row"><span class="av">MC</span><div style="flex: 1; min-width: 0;"><p class="nm">Maya Chen</p><p class="sub">Coach · Wall B</p></div></div>
+<div class="hr"></div>
+<div class="row" style="justify-content: space-between;"><span class="sub">Places</span><span class="chip chip-warn">2 places left of 10</span></div>
+<div class="row" style="justify-content: space-between;"><span class="sub">Price</span><b class="tnum">18 USD</b></div>
+</div>
+<div class="accent-soft rel" style="display: flex; gap: 10px; padding: 12px 14px; border-radius: 14px;">
+<span class="mk mka">2</span>
+<svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="margin-top: 1px;"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<p style="font-size: 14px; line-height: 1.45;">Free to cancel until <b>Wed 6:00 AM</b>. After that a missed class counts as a No-show.</p>
+</div>
+<section aria-labelledby="who-h">
+<p id="who-h" class="eyebrow" style="display: flex; align-items: center; gap: 6px;">Who's going <span class="mk">3</span></p>
+<div class="row" style="gap: 6px; margin-top: 8px;"><span class="av" style="width: 32px; height: 32px; font-size: 11px;">JL</span><span class="av" style="width: 32px; height: 32px; font-size: 11px;">RK</span><span class="av" style="width: 32px; height: 32px; font-size: 11px;">TB</span><span class="sub">and 5 others</span></div>
+</section>
+</main>
+<div class="cta">
+<span class="mk mka" style="top: 6px; left: 8px;">4</span>
+<button type="button" class="btn btn-cta">Book a place · 18 USD</button>
+<p class="sub" style="text-align: center; margin-top: 8px;">Paid at the desk on the day</p>
+</div>
+</div>
+</div>
+<aside class="notes">
+<div class="eyebrow">Mobile · Member</div>
+<h1>Book a class</h1>
+<p class="lead">Monday 9:20 AM: Sam books Wednesday's intro class in one tap, and knows the cut-off before the place is taken.</p>
+<div class="hr"></div>
+<ol>
+<li><span class="mk">1</span><div><b>Decide in one card.</b> Coach, wall, places left and price sit together, so nothing needs a second screen.</div></li>
+<li><span class="mk">2</span><div><b>Cut-off before commitment.</b> The 12 h free-cancel line shows before booking, never after (#3).</div></li>
+<li><span class="mk">3</span><div><b>Social proof, no phone numbers.</b> Initials only; members never see each other's contact details.</div></li>
+<li><span class="mk">4</span><div><b>One primary action.</b> When the class is full this button becomes Join the waitlist (B3.1) with the place in line.</div></li>
+</ol>
+<div class="hr"></div>
+<div class="eyebrow">Stories</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px;"><span class="chip">B2.2</span><span class="chip">B3.1</span></div>
+<div class="eyebrow">Next</div>
+<p class="help">→ M03 My bookings</p>
+</aside>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":800,"height":1020}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

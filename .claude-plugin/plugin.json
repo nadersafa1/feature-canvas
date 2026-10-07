@@ -1,0 +1,11 @@
+{
+  "name": "feature-canvas",
+  "displayName": "Feature canvas",
+  "description": "Plan a product feature as a design canvas: decisions, user flows, annotated wireframes and staged user stories, rendered from one spec.",
+  "version": "1.0.0",
+  "author": { "name": "Nader Safa" },
+  "homepage": "https://github.com/nadersafa1/feature-canvas",
+  "repository": "https://github.com/nadersafa1/feature-canvas",
+  "license": "MIT",
+  "keywords": ["product", "design", "wireframes", "user-stories", "user-flows", "planning", "spec"]
+}

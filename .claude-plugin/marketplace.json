@@ -1,0 +1,14 @@
+{
+  "name": "nadersafa",
+  "description": "Claude Code skills by Nader Safa.",
+  "owner": {
+    "name": "Nader Safa"
+  },
+  "plugins": [
+    {
+      "name": "feature-canvas",
+      "source": "./",
+      "description": "Plan a product feature as a design canvas: decisions, user flows, annotated wireframes and staged user stories, rendered from one spec."
+    }
+  ]
+}
