@@ -5,7 +5,7 @@
 - The static `bundle.html` stores the kit's `<helmet>` once instead of once per board, so a canvas is about 60% smaller. The boards render the same.
 - The README says where the plugin works and what it reads, writes and sends.
 - CI validates the plugin and builds the worked example on every push.
-- A listing icon at `.claude-plugin/icon.png` (source: `docs/images/icon.svg`).
+- A listing icon for the plugin directory, with its editable SVG source in the docs folder.
 
 ## 1.1.0
 
