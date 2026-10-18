@@ -77,6 +77,19 @@ BRAND = {"mode": "light", "background": "#f8fafc", "surface": "#ffffff", "text":
 
 Claude checks the proposal against your real button, card and navigation components before it uses it. The wireframes copy those components' shapes too.
 
+## Where it works
+
+It's a single skill, so it loads in Claude Code, in Cowork and in claude.ai chat. The scripts need an environment where Claude can run `python3`: Claude Code on your machine, a cloud session, or chat with code execution turned on. Reading the product's code and brand needs the repository to be available to Claude, so that part works best in Claude Code.
+
+## What it runs, reads and sends
+
+The plugin has no hooks, MCP servers, agents or binaries, and installs no packages. It's one skill whose instructions Claude follows, plus Python scripts that use only the standard library.
+
+- **Reads:** your repository's source, docs, CSS, theme and font files, only to name things and find the brand. Nothing is changed in your repository unless you ask Claude to copy `STORIES.md` or the decisions into it.
+- **Writes:** the work folder, which is a scratchpad unless you name one: `spec.py`, `WORLD.md`, the boards, `canvas.json`, `bundle.html` and `STORIES.md`.
+- **Network:** the scripts make no network requests and collect no telemetry. The generated boards link one stylesheet from Google Fonts (`fonts.googleapis.com`) for your product's fonts, which your browser fetches when you open a board.
+- **Publishing:** only when you get to that step, and only through your own Claude session's Artifact tool, to a private artifact on your claude.ai account. Without that tool you get local files.
+
 ## Layout
 
 | Path | What it is |
@@ -87,6 +100,7 @@ Claude checks the proposal against your real button, card and navigation compone
 | `skills/feature-canvas/PUBLISH.md` | Publishing routes |
 | `skills/feature-canvas/scripts/` | `brand.py`, `build.py`, `check.py`, `fit.py`, `board.py`, and the kit |
 | `skills/feature-canvas/assets/` | The worked example and the wireframe exemplars |
+| `CHANGELOG.md` | What changed in each version |
 
 ## License
 

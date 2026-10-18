@@ -42,8 +42,11 @@ textarea{width:100%;min-height:220px;font:12px/1.4 ui-monospace,monospace;backgr
 <main id="main"></main>
 <dialog id="dlg"><div class="dlg-head"><b id="dlg-title"></b><button type="button" id="dlg-close">Close</button></div><div class="dlg-body" id="dlg-body"></div></dialog>
 <script type="application/json" id="boards">__DATA__</script>
+<script type="application/json" id="helmets">__HELMETS__</script>
 <script>
+const helmets = JSON.parse(document.getElementById("helmets").textContent);
 const items = JSON.parse(document.getElementById("boards").textContent);
+for (const i of items) i.doc = `<!doctype html><html><head><meta charset="utf-8">${helmets[i.helmet]}</head><body>${i.body}</body></html>`;
 const measured = {};
 const pages = [...new Set(items.map((i) => i.page))];
 let current = pages[0];

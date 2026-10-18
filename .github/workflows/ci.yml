@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate the plugin and marketplace
+        run: |
+          npm install -g @anthropic-ai/claude-code@2.1.302
+          claude plugin validate --strict .
+      - name: Build the worked example
+        run: |
+          work="$RUNNER_TEMP/example"
+          mkdir -p "$work"
+          cp skills/feature-canvas/assets/example/* "$work/"
+          python3 skills/feature-canvas/scripts/check.py "$work" --spec
+          python3 skills/feature-canvas/scripts/build.py "$work"
+          test -s "$work/bundle.html" && test -s "$work/STORIES.md"
+      - name: Propose a brand for this repo
+        run: python3 skills/feature-canvas/scripts/brand.py .
