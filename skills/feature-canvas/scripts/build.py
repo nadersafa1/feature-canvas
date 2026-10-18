@@ -410,6 +410,18 @@ def write_canvas_json(spec, pages, titles):
     return idx
 
 
+def bundle_html(title, items):
+    """The static viewer. Boards share their helmets, so each distinct helmet is stored once."""
+    helmets = []
+    for it in items:
+        if it["helmet"] not in helmets:
+            helmets.append(it["helmet"])
+        it["helmet"] = helmets.index(it["helmet"])
+    tpl = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "bundle_template.html"), encoding="utf-8").read()
+    enc = lambda v: json.dumps(v, ensure_ascii=False).replace("</", "<\\/")
+    return tpl.replace("__TITLE__", E(title)).replace("__HELMETS__", enc(helmets)).replace("__DATA__", enc(items))
+
+
 def write_bundle(spec, pages, titles):
     proj = project_dir(spec)
     items = []
@@ -420,13 +432,9 @@ def write_bundle(spec, pages, titles):
                 hel = re.search(r"<helmet>(.*?)</helmet>", s, re.S).group(1)
                 board = s.split("</helmet>", 1)[1].rsplit("</x-dc>", 1)[0]
                 w, h = board_size(os.path.join(proj, n))
-                doc = f'<!doctype html><html><head><meta charset="utf-8">{hel}</head><body>{board}</body></html>'
-                items.append({"file": n, "title": titles.get(n, n), "page": pname, "row": row_title, "w": w, "h": h, "doc": doc})
-    tpl = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "bundle_template.html"), encoding="utf-8").read()
-    data = json.dumps(items, ensure_ascii=False).replace("</", "<\\/")
-    out = tpl.replace("__TITLE__", E(spec["CANVAS"]["title"])).replace("__DATA__", data)
+                items.append({"file": n, "title": titles.get(n, n), "page": pname, "row": row_title, "w": w, "h": h, "helmet": hel, "body": board})
     with open(os.path.join(spec["_dir"], "bundle.html"), "w", encoding="utf-8") as f:
-        f.write(out)
+        f.write(bundle_html(spec["CANVAS"]["title"], items))
 
 
 def write_markdown(spec):
